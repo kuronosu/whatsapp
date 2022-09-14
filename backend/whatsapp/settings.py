@@ -10,9 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
-import environ, os
-from pathlib import Path
+import os
 from datetime import timedelta
+from pathlib import Path
+
+import environ
 
 env = environ.Env(
     DEBUG=(bool, False),
@@ -49,6 +51,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'channels',
 
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -98,8 +101,6 @@ ASGI_APPLICATION = "whatsapp.asgi.application"
 DATABASES = {
     'default': env.db(default=f'sqlite:///db.sqlite3'),
 }
-
-
 
 
 # Password validation
