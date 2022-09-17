@@ -78,16 +78,6 @@ class ListFriendsView(generics.ListAPIView):
     def get_queryset(self):
         return self.request.user.friends.all()
 
-
-class ListFriendRequestsView(generics.ListAPIView):
-    serializer_class = FriendRequestSerializer
-    permission_classes = [IsAuthenticated]
-    pagination_class = PageNumberPagination
-
-    def get_queryset(self):
-        return FriendRequest.objects.filter(to_user=self.request.user)
-
-
 class SendFriendRequestView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -98,3 +88,37 @@ class SendFriendRequestView(APIView):
         if not created:
             return Response({'response': 'Friend request already sent'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'response': 'Friend request sent'}, status=status.HTTP_200_OK)
+
+class AcceptFriendRequestView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        friend_request = get_object_or_404(FriendRequest, pk=pk, accepted=False)
+        if friend_request.to_user != request.user:
+            return Response({'response': 'You are not authorized to accept this friend request'}, status=status.HTTP_400_BAD_REQUEST)
+        friend_request.update(accepted=True)
+        request.user.friends.add(friend_request.from_user)
+        return Response({'response': 'Friend request accepted'}, status=status.HTTP_200_OK)
+
+class ListFriendRequestsView(generics.ListAPIView):
+    """
+    View to list all friend requests received by the user.
+    """
+    serializer_class = FriendRequestSerializer
+    permission_classes = [IsAuthenticated]
+    pagination_class = PageNumberPagination
+
+    def get_queryset(self):
+        return FriendRequest.objects.filter(to_user=self.request.user, accepted=False)
+
+
+class PendingFriendRequestsView(generics.ListAPIView):
+    """
+    View to list all pending friend requests sent by the user.
+    """
+    serializer_class = FriendRequestSerializer
+    permission_classes = [IsAuthenticated]
+    pagination_class = PageNumberPagination
+
+    def get_queryset(self):
+        return FriendRequest.objects.filter(from_user=self.request.user, accepted=False)

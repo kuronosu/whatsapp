@@ -12,6 +12,7 @@ urlpatterns = [
     path('friends/add/users/', views.ListUsersWithoutRelationView.as_view(), name='list_users_without_relation'),
     path('friends/add/<int:pk>/', views.SendFriendRequestView.as_view(), name='send_friend_request'),
     path('friends/request/', views.ListFriendRequestsView.as_view(), name='received_friend_requests'),
-    # TODO add path to accept friend request
+    path('friends/request/<int:pk>/', views.AcceptFriendRequestView.as_view(), name='accept_friend_request'),
+    path('friends/request/pending/', views.PendingFriendRequestsView.as_view(), name='pending_friend_requests'),
     path('', views.get_routes),
 ]
