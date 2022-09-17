@@ -44,7 +44,7 @@ class FriendRequest(models.Model):
     to_user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='to_user')
     timestamp = models.DateTimeField(auto_now_add=True)
-    acepted = models.BooleanField(default=False)
+    accepted = models.BooleanField(default=False)
 
     def __str__(self):
         return f'{self.from_user} to {self.to_user} at {self.timestamp}'
