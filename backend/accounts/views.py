@@ -78,6 +78,7 @@ class ListFriendsView(generics.ListAPIView):
     def get_queryset(self):
         return self.request.user.friends.all()
 
+
 class SendFriendRequestView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -89,16 +90,20 @@ class SendFriendRequestView(APIView):
             return Response({'response': 'Friend request already sent'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'response': 'Friend request sent'}, status=status.HTTP_200_OK)
 
+
 class AcceptFriendRequestView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, pk):
-        friend_request = get_object_or_404(FriendRequest, pk=pk, accepted=False)
+        friend_request = get_object_or_404(
+            FriendRequest, pk=pk, accepted=False)
         if friend_request.to_user != request.user:
             return Response({'response': 'You are not authorized to accept this friend request'}, status=status.HTTP_400_BAD_REQUEST)
-        friend_request.update(accepted=True)
+        friend_request.accepted = True
+        friend_request.save()
         request.user.friends.add(friend_request.from_user)
         return Response({'response': 'Friend request accepted'}, status=status.HTTP_200_OK)
+
 
 class ListFriendRequestsView(generics.ListAPIView):
     """
