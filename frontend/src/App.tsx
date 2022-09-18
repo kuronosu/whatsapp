@@ -1,6 +1,5 @@
 import { RecoilRoot } from "recoil";
 import { Routes, Route, BrowserRouter } from "react-router-dom";
-import Chat from "./components/Chat";
 import Home from "./components/Home";
 import Login from "./components/Login";
 import Register from "./components/Register";
@@ -18,11 +17,11 @@ function App() {
         <AuthProvider loading={<Loading/>}>
           <Routes>
             <Route element={<PrivateRoute />}>
-              <Route path="/chat" element={<Chat />} />
+              {/* <Route path="/app" element={<Chat />} /> */}
+              <Route path="/" element={<Home />} />
             </Route>
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/" element={<Home />} />
           </Routes>
         </AuthProvider>
       </BrowserRouter>

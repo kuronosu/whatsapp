@@ -7,6 +7,11 @@ const urls = {
       return `${urls.auth.token}refresh/`;
     },
   },
+  messages: {
+    get friends() {
+      return `${Settings.api_base}/messages/friends/`;
+    }
+  }
 };
 
 type SettingsType = {
