@@ -10,9 +10,9 @@ class Message(models.Model):
     message = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
     sender = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='sender')
+        User, on_delete=models.CASCADE, related_name='message_sender')
     receiver = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='receiver')
+        User, on_delete=models.CASCADE, related_name='message_receiver')
 
     class Meta:
         constraints = [
@@ -31,4 +31,9 @@ class Message(models.Model):
                 (models.Q(sender=user) & models.Q(receiver=other_user)) |
                 (models.Q(sender=other_user) & models.Q(receiver=user))
             )\
-            .order_by('-timestamp').all()
+            .select_related('sender', 'receiver')\
+            .order_by('-timestamp')
+
+    @classmethod
+    def last_message_between(cls, user, other_user):
+        return cls.users_chat(user, other_user).first()

@@ -11,7 +11,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import Message
-from .serializers import MessageSerializer
+from .serializers import MessageSerializer, FriendWithLastMessageSerializer
 
 User: Type[_User] = get_user_model()
 
@@ -42,3 +42,21 @@ class MessageListView(generics.ListAPIView):
             raise APIException('You cannot send messages to yourself')
         to_user: _User = get_object_or_404(User, pk=self.kwargs['to'])
         return Message.users_chat(from_user, to_user)
+
+
+class FriendsWithLastMessageView(generics.ListAPIView):
+    serializer_class = FriendWithLastMessageSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user: _User = self.request.user
+        messages = []
+        for other in user.friends.all():
+            msg = Message.last_message_between(user, other)
+            messages.append({
+                'id': msg.pk,
+                'username': msg.sender.username if msg.sender.pk != user.pk else msg.receiver.username,
+                'lastMessage': msg.message,
+                'lastMessageTime': msg.timestamp,
+            })
+        return messages
