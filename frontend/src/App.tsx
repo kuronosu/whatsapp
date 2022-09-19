@@ -5,16 +5,13 @@ import Login from "./components/Login";
 import Register from "./components/Register";
 import AuthProvider from "./utils/AuthProvider";
 import PrivateRoute from "./utils/PrivateRoute";
-
-function Loading() {
-  return <p>Loading</p>;
-}
+import Loading from "./components/Loading";
 
 function App() {
   return (
     <RecoilRoot>
       <BrowserRouter>
-        <AuthProvider loading={<Loading/>}>
+        <AuthProvider loading={<Loading />}>
           <Routes>
             <Route element={<PrivateRoute />}>
               {/* <Route path="/app" element={<Chat />} /> */}

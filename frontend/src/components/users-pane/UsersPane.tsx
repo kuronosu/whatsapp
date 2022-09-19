@@ -3,6 +3,7 @@ import tw from "tailwind-styled-components";
 import Settings from "../../config";
 import { useFetchAllWithAuth } from "../../hooks/useFetchWithAuth";
 import { Friend, useSetFriends } from "../../store/atoms/chat";
+import Loading from "../Loading";
 import UsersList from "./UsersList";
 import UsersPaneHeader from "./UsersPaneHeader";
 
@@ -25,7 +26,7 @@ const useFetchFriends = () => {
     if (!data.loading && data.data) {
       setFriends(data.data);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
   return data;
 };
@@ -35,7 +36,11 @@ export default function UsersPane() {
   return (
     <UsersPaneContainer>
       <UsersPaneHeader />
-      {friendsReq.loading ? <p>Loading</p> : <UsersList />}
+      {friendsReq.loading ? (
+        <Loading/>
+      ) : (
+        <UsersList />
+      )}
     </UsersPaneContainer>
   );
 }
