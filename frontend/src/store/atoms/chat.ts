@@ -96,8 +96,28 @@ export const useAddOldChatMessages = () => {
 export const useAddNewChatMessage = () => {
   const [messages, setter] = useChatMessage();
   return useCallback(
-    (...newMessages: Message[]) => setter([...messages,...newMessages]),
+    (...newMessages: Message[]) => setter([...messages, ...newMessages]),
     [messages, setter]
+  );
+};
+
+export const useUpdateFriendLastMessage = () => {
+  const [friends, setter] = useFriends();
+  return useCallback(
+    (message: Message) => {
+      setter(
+        friends.map((friend) =>
+          friend.id === message.sender || friend.id === message.receiver
+            ? {
+                ...friend,
+                lastMessage: message.message,
+                lastMessageTime: message.timestamp,
+              }
+            : friend
+        )
+      );
+    },
+    [friends, setter]
   );
 };
 

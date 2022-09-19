@@ -3,11 +3,7 @@ import { MdSend } from "react-icons/md";
 import useInput from "../../hooks/useInput";
 import useFetchWithAuth from "../../hooks/useFetchWithAuth";
 import Settings from "../../config";
-import {
-  Message,
-  useAddNewChatMessage,
-  useGetOpenChat,
-} from "../../store/atoms/chat";
+import { Message, useGetOpenChat } from "../../store/atoms/chat";
 import { useEffect } from "react";
 
 const Conatiner = tw.div<any>`
@@ -57,13 +53,10 @@ export default function ChatPaneForm() {
   const text = useInput();
   const [res, sendMessage] = useFetchWithAuth<Message>();
   const openChat = useGetOpenChat();
-  const addNewMessage = useAddNewChatMessage();
 
-  console.log(res);
   useEffect(() => {
     if (res.data) {
       res?.data && text.set("");
-      addNewMessage(res.data);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [res]);
@@ -72,7 +65,6 @@ export default function ChatPaneForm() {
     e.preventDefault();
     const msg = text.value.trim();
     if (!openChat || !msg) return;
-    console.log(Settings.urls.messages.send(openChat));
     sendMessage(Settings.urls.messages.send(openChat), {
       method: "POST",
       headers: {

@@ -1,5 +1,6 @@
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 
+
 class MessagesConsumer(AsyncJsonWebsocketConsumer):
     async def connect(self):
         self.user = self.scope["user"]
@@ -11,3 +12,7 @@ class MessagesConsumer(AsyncJsonWebsocketConsumer):
             self.channel_name
         )
         await self.accept()
+
+    async def new_message(self, event: dict):
+        if 'message' in event:
+            await self.send_json(event['message'])

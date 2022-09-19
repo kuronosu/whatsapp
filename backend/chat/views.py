@@ -1,7 +1,10 @@
 from typing import Type
 
 from accounts.models import User as _User
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 from django.contrib.auth import get_user_model
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
 from rest_framework.exceptions import APIException
@@ -11,9 +14,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import Message
-from .serializers import MessageSerializer, FriendWithLastMessageSerializer
+from .serializers import FriendWithLastMessageSerializer, MessageSerializer
 
 User: Type[_User] = get_user_model()
+
+channel_layer = get_channel_layer()
 
 
 class SendMessageView(APIView):
@@ -29,7 +34,16 @@ class SendMessageView(APIView):
             return Response({'message': 'Message is empty'}, status=status.HTTP_400_BAD_REQUEST)
         message = Message.objects.create(
             message=msg, sender=from_user, receiver=to_user)
-        return Response(MessageSerializer(message).data, status=status.HTTP_201_CREATED)
+        message_dict = MessageSerializer(message).data
+        async_to_sync(channel_layer.group_send)(
+            f'user_messages_{from_user.pk}',
+            {"type": "new_message", "message": message_dict}
+        )
+        async_to_sync(channel_layer.group_send)(
+            f'user_messages_{to_user.pk}',
+            {"type": "new_message", "message": message_dict}
+        )
+        return Response(message_dict, status=status.HTTP_201_CREATED)
 
 
 class MessageListView(generics.ListAPIView):

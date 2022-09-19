@@ -1,10 +1,17 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import tw from "tailwind-styled-components";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import ChatPane from "./chat-pane/ChatPane";
 import UsersPane from "./users-pane/UsersPane";
 import CenteredContainer from "./CenteredContainer";
 import Loading from "./Loading";
+import {
+  Message,
+  useAddNewChatMessage,
+  useGetOpenChat,
+  useUpdateFriendLastMessage,
+} from "../store/atoms/chat";
+import useAuth from "../hooks/useAuth";
 
 const Container = tw.div<any>`
   flex
@@ -25,8 +32,26 @@ const ContainerRight = tw.div<any>`
 `;
 
 export default function Home() {
-  const [socketUrl] = useState("ws://localhost:8000/messages/");
-  const { readyState } = useWebSocket(socketUrl);
+  const openChat = useGetOpenChat();
+  const addNewMessage = useAddNewChatMessage();
+  const updateFriendLastMessage = useUpdateFriendLastMessage();
+  const { token } = useAuth();
+  const [socketUrl] = useState(`ws://localhost:8000/messages/?token=${token}`);
+  const { readyState, lastJsonMessage } = useWebSocket<Message>(socketUrl);
+  const lastMessageRef = useRef(lastJsonMessage);
+
+  useEffect(() => {
+    if (
+      lastJsonMessage &&
+      (openChat === lastJsonMessage.sender ||
+        openChat === lastJsonMessage.receiver) &&
+      lastMessageRef.current !== lastJsonMessage
+    ) {
+      addNewMessage(lastJsonMessage);
+      updateFriendLastMessage(lastJsonMessage);
+      lastMessageRef.current = lastJsonMessage;
+    }
+  }, [addNewMessage, lastJsonMessage, openChat, updateFriendLastMessage]);
 
   return (
     <Container>
