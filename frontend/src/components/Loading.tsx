@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import CenteredContainer from "./CenteredContainer";
+import { CenteredContainer } from "./utils";
 
 const LdsRing = styled.div`
   display: inline-block;

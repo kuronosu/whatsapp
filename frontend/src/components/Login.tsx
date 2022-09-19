@@ -1,67 +1,15 @@
-import { useState } from "react";
 import useAuth from "../hooks/useAuth";
-import tw from "tailwind-styled-components";
 import { Link } from "react-router-dom";
-
-function useInput(initialValue: string) {
-  const [value, setValue] = useState(initialValue);
-  return {
-    value,
-    onChange: (e: any) => setValue(e.target.value),
-  };
-}
-
-const LoginContainer = tw.div<any>`
-flex
-w-full
-h-full
-justify-center
-items-center
-bg-green_lite
-`;
-
-const CardLogin = tw.div<any>`
-p-7
-flex
-w-96
-flex-col
-shadow-2xl
-rounded-xl
-bg-zinc-900
-`;
-
-function MaterialInput({ label, type, name, ...props }: any) {
-  return (
-    <div className="py-2 relative border-b-2 focus-within:border-indigo-500">
-      <input
-        type={type}
-        name={name}
-        title={name}
-        id={name}
-        placeholder=" "
-        autoComplete="off"
-        className="block w-full appearance-none focus:outline-none bg-transparent text-white"
-        {...props}
-      />
-      <label
-        htmlFor={name}
-        className={`absolute top-2 left-0 text-gray-500 duration-300 origin-0 cursor-text ${
-          props.value && "text-2xl"
-        }`}
-      >
-        {label}
-      </label>
-    </div>
-  );
-}
+import useInput from "../hooks/useInput";
+import { FormContainer, FormCard, MaterialInput } from "./utils";
 
 export default function Login() {
   const { login } = useAuth();
   const username = useInput("");
   const password = useInput("");
   return (
-    <LoginContainer>
-      <CardLogin>
+    <FormContainer>
+      <FormCard>
         <section className="flex flex-col space-y-10">
           <div className="text-center text-4xl text-white font-medium">
             Not Whatsapp
@@ -77,13 +25,15 @@ export default function Login() {
             }}
           >
             <MaterialInput
-              {...username}
+              value={username.value}
+              onChange={username.onChange}
               label="Username"
               type="text"
               name="username"
             />
             <MaterialInput
-              {...password}
+              value={password.value}
+              onChange={password.onChange}
               label="Password"
               type="password"
               name="password"
@@ -106,7 +56,7 @@ export default function Login() {
             </Link>
           </p>
         </section>
-      </CardLogin>
-    </LoginContainer>
+      </FormCard>
+    </FormContainer>
   );
 }

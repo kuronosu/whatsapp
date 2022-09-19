@@ -6,6 +6,9 @@ const urls = {
     get refresh() {
       return `${urls.auth.token}refresh/`;
     },
+    get register() {
+      return `${Settings.api_base}/accounts/register/`;
+    },
   },
   messages: {
     get friends() {
@@ -16,8 +19,8 @@ const urls = {
     },
     send(user: number) {
       return `${Settings.api_base}/messages/send/${user}/`;
-    }
-  }
+    },
+  },
 };
 
 type SettingsType = {
@@ -57,7 +60,9 @@ export function checkAndInitSettings() {
       : "";
   Settings.api_base = `http${SSL}://${HOST}:${PORT}/api`;
   Settings.ws_base = `ws${SSL}://${HOST}:${PORT}/ws`;
-  Settings.access_token_lifetime = parseInt(process.env.REACT_APP_ACCESS_TOKEN_LIFETIME || ``) || DefaultTokenLifetime;
+  Settings.access_token_lifetime =
+    parseInt(process.env.REACT_APP_ACCESS_TOKEN_LIFETIME || ``) ||
+    DefaultTokenLifetime;
   Object.freeze(Settings);
 }
 

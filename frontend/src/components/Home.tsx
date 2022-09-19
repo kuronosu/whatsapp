@@ -3,7 +3,6 @@ import tw from "tailwind-styled-components";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import ChatPane from "./chat-pane/ChatPane";
 import UsersPane from "./users-pane/UsersPane";
-import CenteredContainer from "./CenteredContainer";
 import Loading from "./Loading";
 import {
   Message,
@@ -12,6 +11,7 @@ import {
   useUpdateFriendLastMessage,
 } from "../store/atoms/chat";
 import useAuth from "../hooks/useAuth";
+import { CenteredContainer } from "./utils";
 
 const Container = tw.div<any>`
   flex
