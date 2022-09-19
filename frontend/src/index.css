@@ -24,3 +24,16 @@ html {
 #root {
   height: 100%;
 }
+
+input:focus-within ~ label,
+input:not(:placeholder-shown) ~ label {
+  @apply transform scale-50 -translate-y-6;
+}
+
+input:focus-within ~ label {
+  @apply text-indigo-500 text-2xl;
+}
+
+::-ms-reveal {
+  filter: invert(100%);
+}

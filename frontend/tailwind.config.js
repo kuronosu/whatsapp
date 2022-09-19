@@ -9,6 +9,9 @@ module.exports = {
         green: "#A5C9CA",
         green_lite: "#E7F6F2",
       },
+      transformOrigin: {
+        0: "0%",
+      },
     },
   },
   plugins: [],

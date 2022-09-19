@@ -1,10 +1,10 @@
 import tw from "tailwind-styled-components";
 import styled from "styled-components";
+import useAuth from "../../hooks/useAuth";
 
 const MenuItem = tw.a<any>`
   px-2
-  py-0
-  h-9
+  py-1
   flex
   items-center
   rounded-lg
@@ -34,15 +34,18 @@ const DropdownContainer = styled.div`
   background-color: #242526;
   border: 1px solid #474a4d;
   border-radius: 8px;
-  padding: 1rem;
+  /* padding: 1rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem; */
+  padding: 0.25rem 0.75rem;
   overflow: hidden;
   transition: height 500ms ease;
   color: #fff;
 `;
 
-export function DropdownItem({ leftIcon, children }: any) {
+export function DropdownItem({ leftIcon, children, ...props }: any) {
   return (
-    <MenuItem href="/#">
+    <MenuItem href="/#" {...props}>
       {leftIcon && <IconButton>{leftIcon}</IconButton>}
       {children}
     </MenuItem>
@@ -50,15 +53,13 @@ export function DropdownItem({ leftIcon, children }: any) {
 }
 
 export default function DropdownMenu() {
+  const { logout } = useAuth();
   return (
     <DropdownContainer>
-      <div className="">
-        {/* <DropdownItem>My Profile</DropdownItem> */}
-        <DropdownItem>Amigos</DropdownItem>
-        <Separator />
-        <DropdownItem>Añadir</DropdownItem>
-        <DropdownItem>Solicitudes</DropdownItem>
-      </div>
+      {/* <DropdownItem>My Profile</DropdownItem> */}
+      <DropdownItem>Friends</DropdownItem>
+      <Separator />
+      <DropdownItem onClick={logout}>Logout</DropdownItem>
     </DropdownContainer>
   );
 }
