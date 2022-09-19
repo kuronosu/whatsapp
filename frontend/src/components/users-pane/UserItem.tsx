@@ -44,9 +44,9 @@ export function UserItem({
       <div className="flex items-center justify-between w-full">
         <div className="flex flex-col ml-4">
           <span className="font-mono text-lg">{username}</span>
-          <span className="text-s">{lastMessage}</span>
+          <span className="text-s">{lastMessage || <>&nbsp;</>}</span>
         </div>
-        <span>{dayjs(lastMessageTime).fromNow()}</span>
+        <span>{lastMessage && dayjs(lastMessageTime).fromNow()}</span>
       </div>
     </UserItemContainer>
   );
