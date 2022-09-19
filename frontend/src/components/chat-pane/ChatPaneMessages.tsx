@@ -1,6 +1,17 @@
 import tw from "tailwind-styled-components";
 import styled from "styled-components";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
+import {
+  Message,
+  useAddOldChatMessages,
+  useClearChatMessage,
+  useGetChatMessage,
+  useGetOpenChat,
+} from "../../store/atoms/chat";
+import useAuth from "../../hooks/useAuth";
+import Settings from "../../config";
+import useFetchWithAuth from "../../hooks/useFetchWithAuth";
+import { PaginatedRespopnse } from "../../types";
 
 const ContainerCss = styled.ul`
   > * {
@@ -20,7 +31,7 @@ const ContainerCss = styled.ul`
   }
 `;
 
-const Container = tw(ContainerCss)`
+const Container = tw(ContainerCss)<any>`
   flex
   px-7
   w-full
@@ -54,9 +65,15 @@ const ReceivedText = tw<any>(MessageText)`
   py-3 px-4 bg-green_lite rounded-br-3xl rounded-tr-3xl rounded-tl-xl text-black
 `;
 
-const Message = ({ from, text }: { from: number; text: string }) => {
-  const MsgContainer = from === 1 ? SentContainer : ReceivedContainer;
-  const MsgText = from === 1 ? SentText : ReceivedText;
+const MessageItem = ({
+  received,
+  text,
+}: {
+  received: boolean;
+  text: string;
+}) => {
+  const MsgContainer = received ? SentContainer : ReceivedContainer;
+  const MsgText = received ? SentText : ReceivedText;
   return (
     <MsgContainer>
       <MsgText>{text}</MsgText>
@@ -66,18 +83,64 @@ const Message = ({ from, text }: { from: number; text: string }) => {
 
 export default function ChatPaneMessages() {
   const bottomRef = useRef<HTMLDivElement>(null);
-  const [messages] = useState([
-    { from: 1, text: "Message" },
-    { from: 2, text: "Message ".repeat(20) },
-  ]);
+  const shouldScroll = useRef(true);
+  const { decodedToken } = useAuth();
+  const messages = useGetChatMessage();
+  const addMessages = useAddOldChatMessages();
+  const clearMessages = useClearChatMessage();
+  const openChat = useGetOpenChat();
+  const [result, fetchMessages] =
+    useFetchWithAuth<PaginatedRespopnse<Message>>();
+
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (openChat) {
+      clearMessages();
+      fetchMessages(Settings.urls.messages.list(openChat));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [openChat]);
+
+  useEffect(() => {
+    if (!result.loading && result.data?.results) {
+      addMessages(...result.data.results.reverse());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [result]);
+
+  function loadMore() {
+    if (!result.loading && result.data?.next) {
+      fetchMessages(result.data.next);
+    }
+  }
+
+  useEffect(() => {
+    if (shouldScroll.current) {
+      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
   }, [messages]);
+
+  const handleScroll = (e: any) => {
+    const offset = 10;
+    shouldScroll.current =
+      e.target.scrollHeight - e.target.scrollTop <=
+        e.target.clientHeight + offset &&
+      e.target.scrollHeight - e.target.scrollTop >=
+        e.target.clientHeight - offset;
+  };
+
   return (
-    <Container>
+    <Container onScroll={handleScroll}>
       <div className="h-3 w-full">&nbsp;</div>
+      {result.loading && <div>Loading...</div>}
+      {!result.loading && result.data?.next && (
+        <button onClick={loadMore}>Load more...</button>
+      )}
       {messages.map((message, index) => (
-        <Message key={index} from={message.from} text={message.text} />
+        <MessageItem
+          key={index}
+          received={message.sender === decodedToken?.user_id}
+          text={message.message}
+        />
       ))}
       <div ref={bottomRef} />
     </Container>

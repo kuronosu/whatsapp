@@ -2,18 +2,12 @@ import { Link } from "react-router-dom";
 import { useEffect } from "react";
 import useAuth from "../hooks/useAuth";
 import useFetchWithAuth from "../hooks/useFetchWithAuth";
+import { PaginatedRespopnse } from "../types";
 
 type User = {
   id: number;
   username: string;
   email: string;
-};
-
-type PaginatedRespopnse<T> = {
-  count: number;
-  next: string | null;
-  previous: string | null;
-  results: T[];
 };
 
 export default function Chat() {

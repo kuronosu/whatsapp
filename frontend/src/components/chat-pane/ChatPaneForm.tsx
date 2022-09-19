@@ -1,5 +1,14 @@
 import tw from "tailwind-styled-components";
 import { MdSend } from "react-icons/md";
+import useInput from "../../hooks/useInput";
+import useFetchWithAuth from "../../hooks/useFetchWithAuth";
+import Settings from "../../config";
+import {
+  Message,
+  useAddNewChatMessage,
+  useGetOpenChat,
+} from "../../store/atoms/chat";
+import { useEffect } from "react";
 
 const Conatiner = tw.div<any>`
 py-1
@@ -8,14 +17,14 @@ text-white
 bg-zinc-900
 `;
 
-const ChatInputContainer = tw.form<any>`
+const ChatForm = tw.form<any>`
 flex
 flex-row
 items-center
 justify-between
 `;
 
-const ChatInput = tw.input<any>`
+const ChatInput = tw.input`
 grow
 mr-6
 my-1
@@ -45,14 +54,47 @@ hover:bg-zinc-800
 `;
 
 export default function ChatPaneForm() {
+  const text = useInput();
+  const [res, sendMessage] = useFetchWithAuth<Message>();
+  const openChat = useGetOpenChat();
+  const addNewMessage = useAddNewChatMessage();
+
+  console.log(res);
+  useEffect(() => {
+    if (res.data) {
+      res?.data && text.set("");
+      addNewMessage(res.data);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [res]);
+
+  const onSend = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const msg = text.value.trim();
+    if (!openChat || !msg) return;
+    console.log(Settings.urls.messages.send(openChat));
+    sendMessage(Settings.urls.messages.send(openChat), {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ message: text.value }),
+    });
+    // text.set("");
+  };
+
   return (
     <Conatiner>
-      <ChatInputContainer>
-        <ChatInput placeholder="Escribe un mensaje aquí"></ChatInput>
+      <ChatForm onSubmit={onSend}>
+        <ChatInput
+          placeholder="Escribe un mensaje aquí"
+          value={text.value}
+          onChange={text.onChange}
+        />
         <SendButton type="submit">
           <MdSend color="white" size={20} />
         </SendButton>
-      </ChatInputContainer>
+      </ChatForm>
     </Conatiner>
   );
 }

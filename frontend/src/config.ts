@@ -10,6 +10,12 @@ const urls = {
   messages: {
     get friends() {
       return `${Settings.api_base}/messages/friends/`;
+    },
+    list(user: number) {
+      return `${Settings.api_base}/messages/list/${user}/`;
+    },
+    send(user: number) {
+      return `${Settings.api_base}/messages/send/${user}/`;
     }
   }
 };

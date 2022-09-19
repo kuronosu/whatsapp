@@ -1,4 +1,6 @@
+import { useRecoilValue } from "recoil";
 import tw from "tailwind-styled-components";
+import { selectedChatUserState } from "../../store/selectors/chat";
 
 const Container = tw.div<any>`
 h-14
@@ -7,6 +9,7 @@ w-full
 flex-row
 items-center
 bg-zinc-900
+min-h-[3.5rem]
 `;
 
 const UserIcon = tw.button<any>`
@@ -27,10 +30,11 @@ text-white
 `;
 
 export default function ChatPaneHeader() {
+  const user = useRecoilValue(selectedChatUserState);
   return (
     <Container>
-      <UserIcon>FM</UserIcon>
-      <UsernameText>Username</UsernameText>
+      <UserIcon>{user?.username[0].toUpperCase()}</UserIcon>
+      <UsernameText>{user?.username}</UsernameText>
     </Container>
   );
 }
