@@ -54,7 +54,7 @@ class FriendsWithLastMessageView(generics.ListAPIView):
         for other in user.friends.all():
             msg = Message.last_message_between(user, other)
             messages.append({
-                'id': msg.pk,
+                'id': other.pk,
                 'username': msg.sender.username if msg.sender.pk != user.pk else msg.receiver.username,
                 'lastMessage': msg.message,
                 'lastMessageTime': msg.timestamp,
