@@ -12,6 +12,7 @@ import {
 } from "../store/atoms/chat";
 import useAuth from "../hooks/useAuth";
 import { CenteredContainer } from "./utils";
+import Settings from "../config";
 
 const Container = tw.div<any>`
   flex
@@ -36,7 +37,7 @@ export default function Home() {
   const addNewMessage = useAddNewChatMessage();
   const updateFriendLastMessage = useUpdateFriendLastMessage();
   const { token } = useAuth();
-  const [socketUrl] = useState(`ws://localhost:8000/messages/?token=${token}`);
+  const [socketUrl] = useState(Settings.urls.ws.messages(token || ""));
   const { readyState, lastJsonMessage } = useWebSocket<Message>(socketUrl);
   const lastMessageRef = useRef(lastJsonMessage);
 

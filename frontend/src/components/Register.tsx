@@ -66,7 +66,6 @@ export default function Register() {
             className="space-y-10"
             onSubmit={(e) => {
               e.preventDefault();
-              console.log(Settings.urls.auth.register);
               if (password1.value.trim() !== password2.value.trim()) {
                 return alert("Passwords don't match");
               }

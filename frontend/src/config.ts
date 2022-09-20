@@ -21,6 +21,11 @@ const urls = {
       return `${Settings.api_base}/messages/send/${user}/`;
     },
   },
+  ws: {
+    messages(token: string) {
+      return `${Settings.ws_base}/messages/?token=${token}`;
+    },
+  },
 };
 
 type SettingsType = {
@@ -48,18 +53,23 @@ function _validate(envar: string) {
 
 export function checkAndInitSettings() {
   Object.freeze(urls);
-  _validate("REACT_APP_API_HOST");
-  _validate("REACT_APP_API_PORT");
-  const HOST = process.env.REACT_APP_API_HOST;
-  const PORT = process.env.REACT_APP_API_PORT;
-  const SSL =
-    process.env.REACT_APP_API_SSL === "true" ||
-    process.env.REACT_APP_API_SSL === "on" ||
-    process.env.REACT_APP_API_SSL === "1"
-      ? "s"
-      : "";
-  Settings.api_base = `http${SSL}://${HOST}:${PORT}/api`;
-  Settings.ws_base = `ws${SSL}://${HOST}:${PORT}/ws`;
+  if (process.env.NODE_ENV !== "production") {
+    _validate("REACT_APP_API_HOST");
+    _validate("REACT_APP_API_PORT");
+    const HOST = process.env.REACT_APP_API_HOST;
+    const PORT = process.env.REACT_APP_API_PORT;
+    const SSL =
+      process.env.REACT_APP_API_SSL === "true" ||
+      process.env.REACT_APP_API_SSL === "on" ||
+      process.env.REACT_APP_API_SSL === "1"
+        ? "s"
+        : "";
+    Settings.api_base = `http${SSL}://${HOST}:${PORT}/api`;
+    Settings.ws_base = `ws${SSL}://${HOST}:${PORT}/ws`;
+  } else {
+    Settings.api_base = `${window.location.origin}/api`;
+    Settings.ws_base = `ws://${window.location.host}/ws`;
+  }
   Settings.access_token_lifetime =
     parseInt(process.env.REACT_APP_ACCESS_TOKEN_LIFETIME || ``) ||
     DefaultTokenLifetime;
