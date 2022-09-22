@@ -1,27 +1,21 @@
 import ChatPaneHeader from "./ChatPaneHeader";
 import ChatPaneForm from "./ChatPaneForm";
 import ChatPaneMessages from "./ChatPaneMessages";
-import { useGetOpenChat } from "../../store/atoms/chat";
-
-function NoChatSelected() {
-  return (
-    <div className="flex flex-col items-center justify-center h-full bg-zinc-900">
-      <h1 className="text-2xl font-bold text-zinc-300">No chat selected</h1>
-      <p className="text-zinc-300">Select a chat to start messaging</p>
-    </div>
-  );
-}
+import { useParams } from "react-router-dom";
+import { useGetFriends } from "../../store/atoms/chat";
+import EmptyContainer from "../EmptyContainer";
 
 function ChatPane() {
-  const openChat = useGetOpenChat();
-  if (!openChat) {
-    return <NoChatSelected />;
+  const { chatId } = useParams();
+  const friends = useGetFriends();
+  if (!chatId || friends.some((friend) => friend.id.toString() !== chatId)) {
+    return <EmptyContainer title="Chat not found" subtitle="" />;
   }
   return (
     <>
-      <ChatPaneHeader />
-      <ChatPaneMessages />
-      <ChatPaneForm />
+      <ChatPaneHeader chatId={parseInt(chatId)} />
+      <ChatPaneMessages chatId={parseInt(chatId)} />
+      <ChatPaneForm chatId={parseInt(chatId)} />
     </>
   );
 }

@@ -1,6 +1,7 @@
 import tw from "tailwind-styled-components";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { Link, useParams } from "react-router-dom";
 dayjs.extend(relativeTime);
 
 const UserStytle = tw.button`
@@ -22,32 +23,37 @@ const UserItemContainer = tw.li<{ $active: boolean } | any>`
 `;
 
 type UserItemProps = {
-  active?: boolean;
+  // active?: boolean;
+  id: string;
   username: string;
-  onClick?: () => void;
+  // onClick?: () => void;
   lastMessage?: string;
   lastMessageTime?: string;
 };
 
 export function UserItem({
-  active,
-  onClick,
+  // active,
+  // onClick,
+  id,
   username,
   lastMessage,
   lastMessageTime,
 }: UserItemProps) {
+  const params = useParams()
   return (
-    <UserItemContainer $active={active} onClick={onClick}>
-      <div className="flex items-center">
-        <UserStytle />
-      </div>
-      <div className="flex items-center justify-between w-full">
-        <div className="flex flex-col ml-4">
-          <span className="font-mono text-lg">{username}</span>
-          <span className="text-s">{lastMessage || <>&nbsp;</>}</span>
+    <Link to={`/${id}`}>
+      <UserItemContainer $active={params.chatId === id}>
+        <div className="flex items-center">
+          <UserStytle />
         </div>
-        <span>{lastMessage && dayjs(lastMessageTime).fromNow()}</span>
-      </div>
-    </UserItemContainer>
+        <div className="flex items-center justify-between w-full">
+          <div className="flex flex-col ml-4">
+            <span className="font-mono text-lg">{username}</span>
+            <span className="text-s">{lastMessage || <>&nbsp;</>}</span>
+          </div>
+          <span>{lastMessage && dayjs(lastMessageTime).fromNow()}</span>
+        </div>
+      </UserItemContainer>
+    </Link>
   );
 }

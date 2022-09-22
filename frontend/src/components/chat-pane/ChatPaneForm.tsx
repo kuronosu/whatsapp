@@ -3,7 +3,7 @@ import { MdSend } from "react-icons/md";
 import useInput from "../../hooks/useInput";
 import useFetchWithAuth from "../../hooks/useFetchWithAuth";
 import Settings from "../../config";
-import { Message, useGetOpenChat } from "../../store/atoms/chat";
+import { Message } from "../../store/atoms/chat";
 import { useEffect } from "react";
 
 const Conatiner = tw.div<any>`
@@ -49,10 +49,9 @@ hover:backdrop-brightness-150
 hover:bg-zinc-800
 `;
 
-export default function ChatPaneForm() {
+export default function ChatPaneForm({ chatId }: { chatId: number }) {
   const text = useInput();
   const [res, sendMessage] = useFetchWithAuth<Message>();
-  const openChat = useGetOpenChat();
 
   useEffect(() => {
     if (res.data) {
@@ -64,8 +63,8 @@ export default function ChatPaneForm() {
   const onSend = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const msg = text.value.trim();
-    if (!openChat || !msg) return;
-    sendMessage(Settings.urls.messages.send(openChat), {
+    if (!msg) return;
+    sendMessage(Settings.urls.messages.send(chatId), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

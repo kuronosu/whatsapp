@@ -1,6 +1,5 @@
-import { useRecoilValue } from "recoil";
 import tw from "tailwind-styled-components";
-import { selectedChatUserState } from "../../store/selectors/chat";
+import { useGetFriend } from "../../store/atoms/chat";
 
 const Container = tw.div<any>`
 h-14
@@ -29,8 +28,8 @@ ml-3
 text-white
 `;
 
-export default function ChatPaneHeader() {
-  const user = useRecoilValue(selectedChatUserState);
+export default function ChatPaneHeader({chatId}: {chatId: number}) {
+  const user = useGetFriend(chatId)
   return (
     <Container>
       <UserIcon>{user?.username[0].toUpperCase()}</UserIcon>
