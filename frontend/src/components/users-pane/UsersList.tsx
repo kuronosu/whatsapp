@@ -1,7 +1,7 @@
 import tw from "tailwind-styled-components";
 import styled from "styled-components";
 import { UserItem } from "./UserItem";
-import { useGetFriends, useOpenChat } from "../../store/atoms/chat";
+import { useGetFriends } from "../../store/atoms/chat";
 
 const CustomScrollbar = styled.ul`
   ::-webkit-scrollbar {
@@ -12,7 +12,7 @@ const CustomScrollbar = styled.ul`
     background-color: rgb(82 82 91 / var(--tw-bg-opacity));
     max-height: 8px;
   }
-  ::-webkit-scrollbar-track {
+  ::-webkit-scroll bar-track {
     background-color: rgb(28 25 23 / var(--tw-bg-opacity));
     max-height: 8px;
   }
@@ -31,16 +31,14 @@ const Container = tw(CustomScrollbar)`
 
 function UsersList() {
   const friends = useGetFriends();
-  const [openChat, setOpenChat] = useOpenChat();
   return (
     <Container>
       {friends.map((it) => (
         <UserItem
+          id={`${it.id}`}
           key={it.id}
           username={it.username}
-          active={it.id === openChat}
           lastMessage={it.lastMessage}
-          onClick={() => setOpenChat(it.id)}
           lastMessageTime={it.lastMessageTime}
         />
       ))}

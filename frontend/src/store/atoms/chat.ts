@@ -19,7 +19,6 @@ export type Message = {
 
 export type ChatState = {
   friends: Friend[];
-  openChat: number | null;
   messages: Message[];
 };
 
@@ -28,7 +27,6 @@ const chatState = atom<ChatState>({
   default: {
     friends: [],
     messages: [],
-    openChat: null,
   },
 });
 
@@ -44,24 +42,12 @@ export const useGetFriends = () => {
   return useFriends()[0];
 };
 
+export const useGetFriend = (id: number) => {
+  return useGetFriends().find((friend) => friend.id === id);
+};
+
 export const useSetFriends = () => {
   return useFriends()[1];
-};
-
-export const useOpenChat = () => {
-  return useReducedState(
-    chatState,
-    (state) => state.openChat,
-    (state, open) => ({ ...state, openChat: open })
-  );
-};
-
-export const useGetOpenChat = () => {
-  return useOpenChat()[0];
-};
-
-export const useSetOpenChat = () => {
-  return useOpenChat()[1];
 };
 
 export const useChatMessage = () => {

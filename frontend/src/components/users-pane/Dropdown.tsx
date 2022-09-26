@@ -1,6 +1,7 @@
 import tw from "tailwind-styled-components";
 import styled from "styled-components";
 import useAuth from "../../hooks/useAuth";
+import { Link } from "react-router-dom";
 
 const MenuItem = tw.a<any>`
   px-2
@@ -57,7 +58,9 @@ export default function DropdownMenu() {
   return (
     <DropdownContainer>
       {/* <DropdownItem>My Profile</DropdownItem> */}
-      <DropdownItem>Friends</DropdownItem>
+      <DropdownItem>
+        <Link to="friends"> Friends</Link>
+      </DropdownItem>
       <Separator />
       <DropdownItem onClick={logout}>Logout</DropdownItem>
     </DropdownContainer>

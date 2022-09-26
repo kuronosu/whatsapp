@@ -1,18 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import tw from "tailwind-styled-components";
 import useWebSocket, { ReadyState } from "react-use-websocket";
-import ChatPane from "./chat-pane/ChatPane";
 import UsersPane from "./users-pane/UsersPane";
 import Loading from "./Loading";
 import {
   Message,
   useAddNewChatMessage,
-  useGetOpenChat,
   useUpdateFriendLastMessage,
 } from "../store/atoms/chat";
 import useAuth from "../hooks/useAuth";
 import { CenteredContainer } from "./utils";
 import Settings from "../config";
+import { Outlet, useParams } from "react-router-dom";
 
 const Container = tw.div<any>`
   flex
@@ -33,26 +32,26 @@ const ContainerRight = tw.div<any>`
 `;
 
 export default function Home() {
-  const openChat = useGetOpenChat();
   const addNewMessage = useAddNewChatMessage();
   const updateFriendLastMessage = useUpdateFriendLastMessage();
   const { token } = useAuth();
   const [socketUrl] = useState(Settings.urls.ws.messages(token || ""));
   const { readyState, lastJsonMessage } = useWebSocket<Message>(socketUrl);
   const lastMessageRef = useRef(lastJsonMessage);
+  const { chatId } = useParams();
 
   useEffect(() => {
     if (
       lastJsonMessage &&
-      (openChat === lastJsonMessage.sender ||
-        openChat === lastJsonMessage.receiver) &&
+      (chatId === lastJsonMessage.sender.toString() ||
+        chatId === lastJsonMessage.receiver.toString()) &&
       lastMessageRef.current !== lastJsonMessage
     ) {
       addNewMessage(lastJsonMessage);
       updateFriendLastMessage(lastJsonMessage);
       lastMessageRef.current = lastJsonMessage;
     }
-  }, [addNewMessage, lastJsonMessage, openChat, updateFriendLastMessage]);
+  }, [addNewMessage, lastJsonMessage, chatId, updateFriendLastMessage]);
 
   return (
     <Container>
@@ -63,7 +62,7 @@ export default function Home() {
           </div>
           <div className="w-9/12 h-full">
             <ContainerRight>
-              <ChatPane />
+              <Outlet />
             </ContainerRight>
           </div>
         </>

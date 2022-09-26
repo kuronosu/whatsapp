@@ -6,7 +6,6 @@ import {
   useAddOldChatMessages,
   useClearChatMessage,
   useGetChatMessage,
-  useGetOpenChat,
 } from "../../store/atoms/chat";
 import useAuth from "../../hooks/useAuth";
 import Settings from "../../config";
@@ -81,24 +80,23 @@ const MessageItem = ({
   );
 };
 
-export default function ChatPaneMessages() {
+export default function ChatPaneMessages({ chatId }: { chatId: number }) {
   const bottomRef = useRef<HTMLDivElement>(null);
   const shouldScroll = useRef(true);
   const { decodedToken } = useAuth();
   const messages = useGetChatMessage();
   const addMessages = useAddOldChatMessages();
   const clearMessages = useClearChatMessage();
-  const openChat = useGetOpenChat();
   const [result, fetchMessages] =
     useFetchWithAuth<PaginatedRespopnse<Message>>();
 
   useEffect(() => {
-    if (openChat) {
+    if (chatId) {
       clearMessages();
-      fetchMessages(Settings.urls.messages.list(openChat));
+      fetchMessages(Settings.urls.messages.list(chatId));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [openChat]);
+  }, [chatId]);
 
   useEffect(() => {
     if (!result.loading && result.data?.results) {

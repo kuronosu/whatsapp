@@ -6,6 +6,12 @@ import Register from "./components/Register";
 import AuthProvider from "./utils/AuthProvider";
 import PrivateRoute from "./utils/PrivateRoute";
 import Loading from "./components/Loading";
+import ChatPane from "./components/chat-pane/ChatPane";
+import EmptyContainer from "./components/EmptyContainer";
+
+function Friends() {
+  return <div>Friends</div>;
+}
 
 function App() {
   return (
@@ -14,8 +20,19 @@ function App() {
         <AuthProvider loading={<Loading />}>
           <Routes>
             <Route element={<PrivateRoute />}>
-              {/* <Route path="/app" element={<Chat />} /> */}
-              <Route path="/" element={<Home />} />
+              <Route path="/" element={<Home />}>
+                <Route
+                  path="/"
+                  element={
+                    <EmptyContainer
+                      title="No chat selected"
+                      subtitle="Select a chat to start messaging"
+                    />
+                  }
+                />
+                <Route path=":chatId" element={<ChatPane />} />
+                <Route path="friends" element={<Friends />} />
+              </Route>
             </Route>
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
