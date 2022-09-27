@@ -8,10 +8,7 @@ import PrivateRoute from "./utils/PrivateRoute";
 import Loading from "./components/Loading";
 import ChatPane from "./components/chat-pane/ChatPane";
 import EmptyContainer from "./components/EmptyContainer";
-
-function Friends() {
-  return <div>Friends</div>;
-}
+import FriendsPane from "./components/friends/FriendsPane";
 
 function App() {
   return (
@@ -31,7 +28,7 @@ function App() {
                   }
                 />
                 <Route path=":chatId" element={<ChatPane />} />
-                <Route path="friends" element={<Friends />} />
+                <Route path="friends" element={<FriendsPane />} />
               </Route>
             </Route>
             <Route path="/register" element={<Register />} />
