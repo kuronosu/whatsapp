@@ -21,9 +21,7 @@ export default function AuthProvider({ children, loading: Loading }: Props) {
     let c: NodeJS.Timer | undefined = undefined;
     if (token) {
       c = setInterval(() => {
-        refresh(null, true)
-          .then(() => console.log("refreshed"))
-          .catch((e) => console.log(e.message));
+        refresh(null, true).catch((e) => console.log(e.message));
       }, Settings.access_token_lifetime);
     }
     return () => clearInterval(c);
