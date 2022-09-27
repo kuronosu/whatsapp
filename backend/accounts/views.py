@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.http import Http404
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
 from rest_framework.decorators import api_view, permission_classes
@@ -89,6 +90,23 @@ class SendFriendRequestView(APIView):
         if not created:
             return Response({'response': 'Friend request already sent'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'response': 'Friend request sent'}, status=status.HTTP_200_OK)
+
+
+class SendFriendRequestByUsernameView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        username = request.data.get('username')
+        if not username:
+            return Response({'message': 'Username is required'}, status=status.HTTP_400_BAD_REQUEST)
+        to_user = get_object_or_404(User, username=username)
+        if to_user == request.user:
+            raise Http404()
+        _, created = FriendRequest.objects.get_or_create(
+            from_user=request.user, to_user=to_user)
+        if not created:
+            return Response({'message': 'Friend request already sent'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'message': 'Friend request sent'}, status=status.HTTP_200_OK)
 
 
 class AcceptFriendRequestView(APIView):

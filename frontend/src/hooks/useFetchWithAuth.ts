@@ -4,10 +4,11 @@ import useFetch, { FetchState, useFetchAll } from "./useFetch";
 
 export default function useFetchWithAuth<T>(): [
   FetchState<T>,
-  (url: RequestInfo | URL, init?: RequestInit) => void
+  (url: RequestInfo | URL, init?: RequestInit) => void,
+  null | Response
 ] {
   const { token } = useAuth();
-  const [data, dispatch] = useFetch<T>();
+  const [data, dispatch, resRef] = useFetch<T>();
   const _fetch = useCallback(
     (url: RequestInfo | URL, init: RequestInit = {}) => {
       if (token) {
@@ -20,7 +21,7 @@ export default function useFetchWithAuth<T>(): [
     },
     [token, dispatch]
   );
-  return [data, _fetch];
+  return [data, _fetch, resRef];
 }
 
 export function useFetchAllWithAuth<T>(): [

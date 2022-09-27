@@ -53,6 +53,10 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class FriendRequestSerializer(serializers.ModelSerializer):
+    to_user = UserSerializer(read_only=True)
+    from_user = UserSerializer(read_only=True)
+
     class Meta:
         model = FriendRequest
         fields = ('id', 'from_user', 'to_user', 'timestamp', 'accepted')
+        depth = 1

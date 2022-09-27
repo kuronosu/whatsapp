@@ -9,6 +9,18 @@ const urls = {
     get register() {
       return `${Settings.api_base}/accounts/register/`;
     },
+
+    get sendFriendRequest() {
+      return `${Settings.api_base}/accounts/friends/add/`;
+    },
+
+    get pendingFriendRequests() {
+      return `${Settings.api_base}/accounts/friends/request/`;
+    },
+
+    acceptFriendRequest: (id: number) => {
+      return `${Settings.api_base}/accounts/friends/request/accept/${id}/`;
+    },
   },
   messages: {
     get friends() {

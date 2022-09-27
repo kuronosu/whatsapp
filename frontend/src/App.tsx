@@ -8,7 +8,8 @@ import PrivateRoute from "./utils/PrivateRoute";
 import Loading from "./components/Loading";
 import ChatPane from "./components/chat-pane/ChatPane";
 import EmptyContainer from "./components/EmptyContainer";
-import FriendsPane from "./components/friends/FriendsPane";
+import AddFriend from "./components/friends/AddFriend";
+import PendingFriends from "./components/friends/PendingFriens";
 
 function App() {
   return (
@@ -27,8 +28,9 @@ function App() {
                     />
                   }
                 />
+                <Route path="friends" element={<AddFriend />} />
+                <Route path="friends/pending" element={<PendingFriends />} />
                 <Route path=":chatId" element={<ChatPane />} />
-                <Route path="friends" element={<FriendsPane />} />
               </Route>
             </Route>
             <Route path="/register" element={<Register />} />

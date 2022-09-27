@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { MdOutlineMoreHoriz } from "react-icons/md";
 import DropdownMenu from "./Dropdown";
 import useAuth from "../../hooks/useAuth";
+import { Link } from "react-router-dom";
 
 const HeaderContainer = tw.div<any>`
   h-14
@@ -69,7 +70,9 @@ export default function UsersPaneHeader() {
   const { decodedToken } = useAuth();
   return (
     <HeaderContainer>
-      <UserAvatar>{decodedToken?.username[0].toUpperCase()}</UserAvatar>
+      <Link to="/">
+        <UserAvatar>{decodedToken?.username[0].toUpperCase()}</UserAvatar>
+      </Link>
       <NavItem icon={<MdOutlineMoreHoriz color="white" size={25} />}>
         <DropdownMenu />
       </NavItem>

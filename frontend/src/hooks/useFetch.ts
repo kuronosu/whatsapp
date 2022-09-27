@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 
 export type FetchState<T> = {
   data: T | null;
@@ -8,13 +8,15 @@ export type FetchState<T> = {
 
 export default function useFetch<T>(): [
   FetchState<T>,
-  (url: RequestInfo | URL, init?: RequestInit) => void
+  (url: RequestInfo | URL, init?: RequestInit) => void,
+  null | Response
 ] {
   const [state, setState] = useState<FetchState<T>>({
     loading: false,
     data: null,
     error: null,
   });
+  const responseRef = useRef<null | Response>(null);
 
   const dispatch = useCallback(
     async (input: RequestInfo | URL, init?: RequestInit) => {
@@ -25,6 +27,7 @@ export default function useFetch<T>(): [
       });
       try {
         const response = await fetch(input, init);
+        responseRef.current = response;
         const data = await response.json();
         setState({
           loading: false,
@@ -42,7 +45,7 @@ export default function useFetch<T>(): [
     [state]
   );
 
-  return [state, dispatch];
+  return [state, dispatch, responseRef.current];
 }
 
 type PaginatedResponse<T> = {
