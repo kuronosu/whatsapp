@@ -35,7 +35,6 @@ const useAuth = () => {
   );
   const [auth, setAuth] = useAuthTokens();
   const navigate = useNavigate();
-
   // call this function when you want to authenticate the user
   const login = useCallback(
     async (username: string, password: string, okUrl = "/") => {
@@ -60,21 +59,22 @@ const useAuth = () => {
         throw error;
       }
     },
-    [setAuth, setRefreshToken, clearRefreshToken, navigate]
+    [setAuth, setRefreshToken, navigate, clearRefreshToken]
   );
 
   const refresh = useCallback(
     async (okRedirect = null, redirectOnError = false) => {
       try {
-        if (!refreshToken) {
+        if (!refreshToken && !auth.refresh) {
           throw new Error("No refresh token");
         }
+        const _refreshToken = refreshToken || auth.refresh;
         const res = await fetch(authUrls.refresh, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ refresh: refreshToken }),
+          body: JSON.stringify({ refresh: _refreshToken }),
         });
         if (!res.ok) {
           clearRefreshToken();
@@ -97,7 +97,14 @@ const useAuth = () => {
         }
       }
     },
-    [refreshToken, clearRefreshToken, setRefreshToken, navigate, setAuth]
+    [
+      refreshToken,
+      setAuth,
+      setRefreshToken,
+      navigate,
+      clearRefreshToken,
+      auth.refresh,
+    ]
   );
 
   // call this function to sign out logged in user
@@ -109,12 +116,12 @@ const useAuth = () => {
         navigate(redirectUrl);
       }
     },
-    [clearRefreshToken, navigate, setAuth]
+    [navigate, setAuth, clearRefreshToken]
   );
 
   const data = useJwt<DecodedToken>(auth.access || "");
 
-  const value = useMemo(
+  return useMemo(
     () => ({
       login,
       logout,
@@ -125,7 +132,6 @@ const useAuth = () => {
     }),
     [login, logout, refresh, auth, data]
   );
-  return value;
 };
 
 export default useAuth;
